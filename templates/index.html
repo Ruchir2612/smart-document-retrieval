@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Intelligent Document Retrieval System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="hero">
+
+        <h1>🔍 Intelligent Document Retrieval System</h1>
+
+        <p class="subtitle">
+            Search 120,000 news articles using Information Retrieval and Machine Learning
+        </p>
+
+        <a class="button" href="/dashboard">
+            📊 Dashboard
+        </a>
+
+    </div>
+
+    <form method="POST" action="/search">
+
+        <input
+            type="text"
+            name="query"
+            placeholder="Search topics like Football, AI, Cricket, Business..."
+            value="{{ query }}"
+            required>
+
+        <button type="submit">
+            🔍 Search
+        </button>
+
+    </form>
+
+    {% if predicted_category %}
+
+    <div class="card prediction-card">
+
+        <h2>🤖 AI Query Classification</h2>
+
+        <hr>
+
+        <p>
+
+            <b>Predicted Category :</b>
+
+            {{ predicted_category }}
+
+        </p>
+
+        <p>
+
+            <b>Confidence :</b>
+
+            {{ confidence }}%
+
+        </p>
+
+    </div>
+
+    {% endif %}
+
+    {% if results %}
+
+    <div class="results-header">
+
+        <h2>📄 Top Matching Documents</h2>
+
+        <a class="button" href="/download">
+            📥 Download CSV
+        </a>
+
+    </div>
+
+    {% for result in results %}
+
+    <div class="card result-card">
+
+        <div class="result-top">
+
+            <span class="category">
+
+                {{ result.category }}
+
+            </span>
+
+            <span class="score">
+
+                ⭐ Similarity Score :
+                <b>{{ result.score }}</b>
+
+            </span>
+
+        </div>
+
+        <hr>
+
+        <div class="document">
+
+            {{ result.document }}
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+    {% if history %}
+
+    <div class="card">
+
+        <h2>🕒 Recent Searches</h2>
+
+        <hr>
+
+        <ul>
+
+            {% for item in history %}
+
+            <li>{{ item }}</li>
+
+            {% endfor %}
+
+        </ul>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

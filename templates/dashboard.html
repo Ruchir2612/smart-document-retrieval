@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Project Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="hero">
+
+        <h1>📊 Intelligent Document Retrieval Dashboard</h1>
+
+        <p class="subtitle">
+            Information Retrieval + Machine Learning Project Statistics
+        </p>
+
+        <a class="button" href="/search">
+            🔍 Search Documents
+        </a>
+
+    </div>
+
+    <div class="stats">
+
+        <div class="card">
+
+            <h2>📄 Total Documents</h2>
+
+            <hr>
+
+            <h1>{{ "{:,}".format(total_documents) }}</h1>
+
+            <p>News articles available for searching</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>📚 Vocabulary Size</h2>
+
+            <hr>
+
+            <h1>{{ "{:,}".format(vocabulary_size) }}</h1>
+
+            <p>Unique TF-IDF features</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>🎯 ML Accuracy</h2>
+
+            <hr>
+
+            <h1>{{ accuracy }}%</h1>
+
+            <p>Naive Bayes Classification Accuracy</p>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>📊 Dataset Category Distribution</h2>
+
+        <hr>
+
+        <img
+            src="{{ url_for('static', filename='category_distribution.png') }}"
+            style="width:100%;max-width:850px;display:block;margin:auto;">
+
+    </div>
+
+    <div class="card">
+
+        <h2>🥧 Category Percentage Distribution</h2>
+
+        <hr>
+
+        <img
+            src="{{ url_for('static', filename='category_pie.png') }}"
+            style="width:100%;max-width:550px;display:block;margin:auto;">
+
+    </div>
+
+    <div class="card">
+
+        <h2>📌 Technologies Used</h2>
+
+        <hr>
+
+        <table style="width:100%;font-size:17px;line-height:2;border-collapse:collapse;">
+
+            <tr>
+                <td><b>Programming Language</b></td>
+                <td>Python</td>
+            </tr>
+
+            <tr>
+                <td><b>Framework</b></td>
+                <td>Flask</td>
+            </tr>
+
+            <tr>
+                <td><b>Machine Learning</b></td>
+                <td>Multinomial Naive Bayes</td>
+            </tr>
+
+            <tr>
+                <td><b>Information Retrieval</b></td>
+                <td>TF-IDF + Cosine Similarity</td>
+            </tr>
+
+            <tr>
+                <td><b>Dataset</b></td>
+                <td>AG News (120,000 Documents)</td>
+            </tr>
+
+            <tr>
+                <td><b>Frontend</b></td>
+                <td>HTML, CSS, Flask Templates</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div class="actions">
+
+        <a class="button" href="/">
+            🏠 Home
+        </a>
+
+        <a class="button" href="/search">
+            🔍 Search
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
