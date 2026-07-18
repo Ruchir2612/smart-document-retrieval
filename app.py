@@ -8,7 +8,6 @@ import io
 
 app = Flask(__name__)
 
-# Load search engine once
 vectorizer, tfidf_matrix, documents, categories = create_tfidf()
 
 category_names = {
@@ -42,7 +41,7 @@ def home():
     results = []
     query = ""
     predicted_category = ""
-    confidence = ""
+    confidence = 0
 
     if request.method == "POST":
 
@@ -58,25 +57,23 @@ def home():
 
         predicted_index = category_to_index[predicted_category]
 
-        search_results = search(
-            query,
-            vectorizer,
-            tfidf_matrix,
-            documents,
-            categories,
+        results = search(
+            query=query,
+            vectorizer=vectorizer,
+            tfidf_matrix=tfidf_matrix,
+            documents=documents,
+            categories=categories,
             predicted_category=predicted_index,
             top_n=10
         )
 
-        for item in search_results:
-
+        for item in results:
             item["category"] = category_names.get(
                 item["category"],
                 "Unknown"
             )
 
-        latest_results = search_results
-        results = search_results
+        latest_results = results
 
     return render_template(
         "index.html",
@@ -95,7 +92,7 @@ def dashboard():
         "dashboard.html",
         total_documents=len(documents),
         vocabulary_size=len(vectorizer.vocabulary_),
-        accuracy=90.66
+        accuracy=91.07
     )
 
 
@@ -123,7 +120,7 @@ def download():
     output.seek(0)
 
     return Response(
-        output,
+        output.getvalue(),
         mimetype="text/csv",
         headers={
             "Content-Disposition":

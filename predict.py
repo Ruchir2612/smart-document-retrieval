@@ -12,7 +12,39 @@ category_names = {
 }
 
 
+def expand_query(text):
+
+    text = text.lower()
+
+    expansions = {
+        "ai": "artificial intelligence",
+        "ml": "machine learning",
+        "cv": "computer vision",
+        "nlp": "natural language processing",
+        "ipl": "indian premier league",
+        "wc": "world cup",
+        "gdp": "gross domestic product",
+        "covid": "coronavirus",
+        "usa": "united states",
+        "uk": "united kingdom"
+    }
+
+    words = text.split()
+
+    expanded = []
+
+    for word in words:
+        if word in expansions:
+            expanded.append(expansions[word])
+        else:
+            expanded.append(word)
+
+    return " ".join(expanded)
+
+
 def predict_category(text):
+
+    text = expand_query(text)
 
     vector = vectorizer.transform([text])
 
@@ -21,6 +53,12 @@ def predict_category(text):
     probabilities = model.predict_proba(vector)[0]
 
     confidence = max(probabilities) * 100
+
+    if confidence < 60:
+        return (
+            "Uncertain",
+            round(confidence, 2)
+        )
 
     return (
         category_names[prediction],

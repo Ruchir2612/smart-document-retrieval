@@ -1,4 +1,3 @@
-import pandas as pd
 import joblib
 
 from sklearn.model_selection import train_test_split
@@ -9,21 +8,26 @@ from tfidf_search import create_tfidf
 
 CLASSIFIER_PATH = "models/classifier.pkl"
 
+
 def train_model():
 
-    # Use the SAME TF-IDF vectorizer as retrieval
+    # Create TF-IDF
     vectorizer, tfidf_matrix, documents, categories = create_tfidf()
 
     X = tfidf_matrix
     y = categories
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
+        X,
+        y,
         test_size=0.20,
-        random_state=42
+        random_state=42,
+        stratify=y
     )
 
+    # Multinomial Naive Bayes Model
     model = MultinomialNB()
+
     model.fit(X_train, y_train)
 
     predictions = model.predict(X_test)
@@ -36,12 +40,13 @@ def train_model():
     print("\nClassification Report\n")
     print(classification_report(y_test, predictions))
 
-    # Save trained model
+    # Save model
     joblib.dump(model, CLASSIFIER_PATH)
 
     print("\nModel Saved Successfully")
 
     return model, vectorizer
+
 
 def predict_category(text):
 
@@ -49,7 +54,12 @@ def predict_category(text):
     vectorizer = joblib.load("models/vectorizer.pkl")
 
     vector = vectorizer.transform([text])
+
     prediction = model.predict(vector)[0]
+
+    probabilities = model.predict_proba(vector)[0]
+
+    confidence = max(probabilities) * 100
 
     category_names = {
         1: "World",
@@ -58,7 +68,11 @@ def predict_category(text):
         4: "Sci/Tech"
     }
 
-    return category_names[prediction]
+    return (
+        category_names[prediction],
+        round(confidence, 2)
+    )
+
 
 if __name__ == "__main__":
     train_model()

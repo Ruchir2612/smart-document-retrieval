@@ -16,6 +16,14 @@ def search(query,
         tfidf_matrix
     ).flatten()
 
+    # Boost documents from predicted category
+    if predicted_category is not None:
+
+        for i in range(len(similarity_scores)):
+
+            if categories[i] == predicted_category:
+                similarity_scores[i] *= 1.15
+
     top_indices = similarity_scores.argsort()[::-1]
 
     results = []
@@ -24,11 +32,6 @@ def search(query,
 
         if similarity_scores[index] <= 0:
             continue
-
-        if predicted_category is not None:
-
-            if categories[index] != predicted_category:
-                continue
 
         results.append({
 
