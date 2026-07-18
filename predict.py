@@ -54,12 +54,6 @@ def predict_category(text):
 
     confidence = max(probabilities) * 100
 
-    if confidence < 60:
-        return (
-            "Uncertain",
-            round(confidence, 2)
-        )
-
     return (
         category_names[prediction],
         round(confidence, 2)
