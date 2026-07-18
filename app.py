@@ -5,9 +5,11 @@ from predict import predict_category
 
 import csv
 import io
+import time
 
 app = Flask(__name__)
 
+# Load Search Engine
 vectorizer, tfidf_matrix, documents, categories = create_tfidf()
 
 category_names = {
@@ -41,9 +43,12 @@ def home():
     results = []
     query = ""
     predicted_category = ""
-    confidence = 0
+    confidence = ""
+    search_time = 0
 
     if request.method == "POST":
+
+        start = time.time()
 
         query = request.form["query"]
 
@@ -55,17 +60,30 @@ def home():
 
         predicted_category, confidence = predict_category(query)
 
-        predicted_index = category_to_index[predicted_category]
+        predicted_index = category_to_index.get(predicted_category)
 
-        results = search(
-            query=query,
-            vectorizer=vectorizer,
-            tfidf_matrix=tfidf_matrix,
-            documents=documents,
-            categories=categories,
-            predicted_category=predicted_index,
-            top_n=10
-        )
+        if predicted_index is None:
+
+            results = search(
+                query=query,
+                vectorizer=vectorizer,
+                tfidf_matrix=tfidf_matrix,
+                documents=documents,
+                categories=categories,
+                top_n=10
+            )
+
+        else:
+
+            results = search(
+                query=query,
+                vectorizer=vectorizer,
+                tfidf_matrix=tfidf_matrix,
+                documents=documents,
+                categories=categories,
+                predicted_category=predicted_index,
+                top_n=10
+            )
 
         for item in results:
             item["category"] = category_names.get(
@@ -75,13 +93,17 @@ def home():
 
         latest_results = results
 
+        search_time = round(time.time() - start, 3)
+
     return render_template(
         "index.html",
         results=results,
         query=query,
         history=search_history,
         predicted_category=predicted_category,
-        confidence=confidence
+        confidence=confidence,
+        search_time=search_time,
+        total_documents=len(documents)
     )
 
 
