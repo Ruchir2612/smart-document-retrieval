@@ -1,7 +1,7 @@
 import joblib
 
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, classification_report
 
 from tfidf_search import create_tfidf
@@ -11,7 +11,6 @@ CLASSIFIER_PATH = "models/classifier.pkl"
 
 def train_model():
 
-    # Create TF-IDF
     vectorizer, tfidf_matrix, documents, categories = create_tfidf()
 
     X = tfidf_matrix
@@ -25,10 +24,7 @@ def train_model():
         stratify=y
     )
 
-    model = LogisticRegression(
-        max_iter=1000,
-        random_state=42
-    )
+    model = MultinomialNB()
 
     model.fit(X_train, y_train)
 
@@ -45,8 +41,6 @@ def train_model():
     joblib.dump(model, CLASSIFIER_PATH)
 
     print("\nModel Saved Successfully")
-
-    return model
 
 
 if __name__ == "__main__":
