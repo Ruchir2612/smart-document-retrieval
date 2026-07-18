@@ -1,7 +1,7 @@
 import joblib
 
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 
 from tfidf_search import create_tfidf
@@ -25,8 +25,10 @@ def train_model():
         stratify=y
     )
 
-    # Multinomial Naive Bayes Model
-    model = MultinomialNB()
+    model = LogisticRegression(
+        max_iter=1000,
+        random_state=42
+    )
 
     model.fit(X_train, y_train)
 
@@ -40,38 +42,11 @@ def train_model():
     print("\nClassification Report\n")
     print(classification_report(y_test, predictions))
 
-    # Save model
     joblib.dump(model, CLASSIFIER_PATH)
 
     print("\nModel Saved Successfully")
 
-    return model, vectorizer
-
-
-def predict_category(text):
-
-    model = joblib.load(CLASSIFIER_PATH)
-    vectorizer = joblib.load("models/vectorizer.pkl")
-
-    vector = vectorizer.transform([text])
-
-    prediction = model.predict(vector)[0]
-
-    probabilities = model.predict_proba(vector)[0]
-
-    confidence = max(probabilities) * 100
-
-    category_names = {
-        1: "World",
-        2: "Sports",
-        3: "Business",
-        4: "Sci/Tech"
-    }
-
-    return (
-        category_names[prediction],
-        round(confidence, 2)
-    )
+    return model
 
 
 if __name__ == "__main__":
