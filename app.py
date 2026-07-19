@@ -7,9 +7,13 @@ import csv
 import io
 import time
 
+
 app = Flask(__name__)
 
+# -----------------------------
 # Load Search Engine
+# -----------------------------
+
 vectorizer, tfidf_matrix, documents, categories = create_tfidf()
 
 category_names = {
@@ -30,10 +34,18 @@ search_history = []
 latest_results = []
 
 
+# -----------------------------
+# Landing Page
+# -----------------------------
+
 @app.route("/")
 def landing():
     return render_template("home.html")
 
+
+# -----------------------------
+# Search Page
+# -----------------------------
 
 @app.route("/search", methods=["GET", "POST"])
 def home():
@@ -48,9 +60,13 @@ def home():
 
     if request.method == "POST":
 
-        start = time.time()
+        start_time = time.time()
 
-        query = request.form["query"]
+        query = request.form["query"].strip()
+
+        # -----------------------------
+        # Search History
+        # -----------------------------
 
         if query not in search_history:
             search_history.insert(0, query)
@@ -58,9 +74,17 @@ def home():
         if len(search_history) > 10:
             search_history.pop()
 
+        # -----------------------------
+        # ML Prediction
+        # -----------------------------
+
         predicted_category, confidence = predict_category(query)
 
         predicted_index = category_to_index.get(predicted_category)
+
+        # -----------------------------
+        # Information Retrieval
+        # -----------------------------
 
         if predicted_index is None:
 
@@ -85,38 +109,73 @@ def home():
                 top_n=10
             )
 
+        # -----------------------------
+        # Category Names
+        # -----------------------------
+
         for item in results:
+
             item["category"] = category_names.get(
                 item["category"],
                 "Unknown"
             )
 
-        latest_results = results
 
-        search_time = round(time.time() - start, 3)
+        # -----------------------------
+        # Search Time
+        # -----------------------------
+
+        end_time = time.time()
+
+        search_time = round(
+            end_time - start_time,
+            3
+        )
 
     return render_template(
+
         "index.html",
+
         results=results,
+
         query=query,
+
         history=search_history,
+
         predicted_category=predicted_category,
+
         confidence=confidence,
+
         search_time=search_time,
+
         total_documents=len(documents)
+
     )
 
+
+# -----------------------------
+# Dashboard
+# -----------------------------
 
 @app.route("/dashboard")
 def dashboard():
 
     return render_template(
+
         "dashboard.html",
+
         total_documents=len(documents),
+
         vocabulary_size=len(vectorizer.vocabulary_),
+
         accuracy=91.07
+
     )
 
+
+# -----------------------------
+# CSV Download
+# -----------------------------
 
 @app.route("/download")
 def download():
@@ -133,23 +192,37 @@ def download():
 
     for row in latest_results:
 
+        clean_text = re.sub(
+            "<.*?>",
+            "",
+            row["document"]
+        )
+
         writer.writerow([
             row["category"],
             row["score"],
-            row["document"]
+            clean_text
         ])
 
     output.seek(0)
 
     return Response(
+
         output.getvalue(),
+
         mimetype="text/csv",
+
         headers={
             "Content-Disposition":
             "attachment; filename=search_results.csv"
         }
+
     )
 
+
+# -----------------------------
+# Run App
+# -----------------------------
 
 if __name__ == "__main__":
     app.run(debug=True)

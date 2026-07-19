@@ -3,7 +3,12 @@
 
 <head>
 
-    <title>Intelligent Document Retrieval System</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Document Retrieval System</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
@@ -19,11 +24,16 @@
         <h1>🔍 Smart Document Retrieval And Classification System</h1>
 
         <p class="subtitle">
-            Search 120,000 news articles using Information Retrieval and Machine Learning
+
+            Search 120,000 News Articles using
+            Information Retrieval and Machine Learning
+
         </p>
 
         <a class="button" href="/dashboard">
+
             📊 Dashboard
+
         </a>
 
     </div>
@@ -31,14 +41,21 @@
     <form method="POST" action="/search">
 
         <input
+
             type="text"
+
             name="query"
-            placeholder="Search topics like Football, AI, Cricket, Business..."
+
+            placeholder="Enter Your Query"
+
             value="{{ query }}"
+
             required>
 
         <button type="submit">
+
             🔍 Search
+
         </button>
 
     </form>
@@ -47,7 +64,7 @@
 
     <div class="card prediction-card">
 
-        <h2>🤖 Query Classification</h2>
+        <h2>🤖 AI Query Classification</h2>
 
         <hr>
 
@@ -73,12 +90,24 @@
 
     {% if results %}
 
+    <p class="search-time">
+
+        ⏱️ Results found in
+
+        <b>{{ search_time }}</b>
+
+        seconds
+
+    </p>
+
     <div class="results-header">
 
         <h2>📄 Top Matching Documents</h2>
 
         <a class="button" href="/download">
+
             📥 Download CSV
+
         </a>
 
     </div>
@@ -128,11 +157,11 @@
 
         <ul>
 
-            {% for item in history %}
+        {% for item in history %}
 
             <li>{{ item }}</li>
 
-            {% endfor %}
+        {% endfor %}
 
         </ul>
 
